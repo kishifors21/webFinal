@@ -1,12 +1,13 @@
 var uri = "http://140.128.102.242:8080";
 
-function renew(){
+async function renew(){
   genTable = document.getElementsByClassName('genTable');
   genTable.remove;
   while(genTable.length > 0){
     genTable[0].parentNode.removeChild(genTable[0]);
-}
-  drawTable();
+  }
+  await drawTable();
+  sum();
 }
 async function drawTable() {
   var jsondata = await fetch(uri+'/getdata')
@@ -38,13 +39,11 @@ async function drawTable() {
 }
 async function newData() {
   var tr, td;
-  var data = document.getElementsByClassName('newData');
-  console.log(data)
-
-  // for (var i = 0; i < data.length; i++) // loop through data source
-  // {
-
-  // }
+  var data = document.getElementsByClassName('newData'); 
+  if (isNaN(parseInt(data[0].value))||isNaN(parseInt(data[1].value))){
+    alert("value input error!");
+    return
+  }
 
   var body = {
     "date": new Date().toISOString().slice(0, 19).replace('T', ' '),
@@ -66,8 +65,32 @@ async function newData() {
   renew();
 
 }
-$(document).ready(function() {
+function sum(){
+  var in_sum = 0;
+  var out_sum = 0;
+  var amount_sum = 0;
+  // $("tr").remove()
+  $("tr").not(':first').each(function() {
+    console.log($(this));
+    in_sum +=  getnum($(this).find("td:eq(1)").text());
+    out_sum +=  getnum($(this).find("td:eq(2)").text());
+    amount_sum +=  getnum($(this).find("td:eq(3)").text());
+    function getnum(t){
+      if(isNumeric(t)){
+          return parseInt(t,10);
+      }
+      return 0;
+      function isNumeric(n) {
+          return !isNaN(parseFloat(n)) && isFinite(n);
+      }
+    }
+  });
+  $("#in_sum").text('共收入 $'+in_sum);
+  $("#out_sum").text('共支出 $'+out_sum);
+  $("#amount_sum").text('總資產 $'+amount_sum);
+}
+$(document).ready(async function() {
 
-  drawTable();
-
+  await drawTable();
+  sum();
 });
