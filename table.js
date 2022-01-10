@@ -41,7 +41,8 @@ async function newData() {
   var tr, td;
   var data = document.getElementsByClassName('newData'); 
   if (isNaN(parseInt(data[0].value))||isNaN(parseInt(data[1].value))){
-    alert("value input error!");
+    // alert("value input error!");
+    showAlert();
     return
   }
 
@@ -88,9 +89,16 @@ function sum(){
   $("#in_sum").text('共收入 $'+in_sum);
   $("#out_sum").text('共支出 $'+out_sum);
   $("#amount_sum").text('總資產 $'+amount_sum);
+  $("#my_bar").text(amount_sum+'/10000');
+  let perc = amount_sum/10000*100;
+  console.log(perc);
+  document.getElementById("my_bar").style.width=perc+'%';
+}
+
+function showAlert() {
+  $("#my_alert").toast('show');
 }
 $(document).ready(async function() {
-
   await drawTable();
   sum();
 });
